@@ -279,6 +279,13 @@ static void agSurfaceNew(AgateVM *vm) {
   assert(surface->ptr);
 }
 
+static void agSurfaceNewFromPng(AgateVM *vm) {
+  struct Surface *surface = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+  const char *filename = agateSlotGetString(vm, agateSlotForArg(vm, 1));
+  surface->ptr = cairo_image_surface_create_from_png(filename);
+  assert(surface->ptr);
+}
+
 static void agSurfaceExport(AgateVM *vm) {
   struct Surface *surface = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
   const char *filename = agateSlotGetString(vm, agateSlotForArg(vm, 1));
@@ -418,6 +425,14 @@ static void agContextSetSourceColor(AgateVM *vm) {
   struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
   struct Color *color = agateSlotGetForeign(vm, agateSlotForArg(vm, 1));
   cairo_set_source_rgba(context->ptr, color->r, color->g, color->b, color->a);
+}
+
+static void agContextSetSourceSurface(AgateVM *vm) {
+  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+  struct Surface *surface = agateSlotGetForeign(vm, agateSlotForArg(vm, 1));
+  double x = agateSlotGetFloat(vm, agateSlotForArg(vm, 2));
+  double y = agateSlotGetFloat(vm, agateSlotForArg(vm, 3));
+  cairo_set_source_surface(context->ptr, surface->ptr, x, y);
 }
 
 static void agContextSetSourcePattern(AgateVM *vm) {
@@ -632,6 +647,7 @@ static AgateForeignMethodFunc agMethodHandler(AgateVM *vm, const char *unit_name
 
   if (equals(class_name, "Surface")) {
     if (equals(signature, "init new(_)")) { return agSurfaceNew; }
+    if (equals(signature, "init new_from_png(_)")) { return agSurfaceNewFromPng; }
     if (equals(signature, "export(_)")) { return agSurfaceExport; }
   }
 
@@ -663,6 +679,7 @@ static AgateForeignMethodFunc agMethodHandler(AgateVM *vm, const char *unit_name
     if (equals(signature, "scale(_,_)")) { return agContextScale; }
     if (equals(signature, "rotate(_)")) { return agContextRotate; }
     if (equals(signature, "set_source_color(_)")) { return agContextSetSourceColor; }
+    if (equals(signature, "set_source_surface(_,_,_)")) { return agContextSetSourceSurface; }
     if (equals(signature, "set_source_pattern(_)")) { return agContextSetSourcePattern; }
     if (equals(signature, "set_antialias(_)")) { return agContextSetAntialias; }
     if (equals(signature, "set_fill_rule(_)")) { return agContextSetFillRule; }
