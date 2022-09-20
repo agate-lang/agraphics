@@ -109,7 +109,7 @@ class Path {
   static CLOSE { 4 }
 }
 
-foreign class Vector {
+foreign class Vector2 {
   foreign construct new(x, y)
 
   foreign x
@@ -117,22 +117,24 @@ foreign class Vector {
   foreign y
   foreign y=(val)
 
-  +(other) { Vector.new(.x + other.x, .y + other.y) }
-  -(other) { Vector.new(.x - other.x, .y - other.y) }
+  +(other) { Vector2.new(.x + other.x, .y + other.y) }
+  -(other) { Vector2.new(.x - other.x, .y - other.y) }
 
-  *(other) { (other is Float) ? Vector.new(.x * other, .y * other) : Vector.new(.x * other.x, .y * other.y) }
-  /(other) { (other is Float) ? Vector.new(.x / other, .y / other) : Vector.new(.x / other.x, .y / other.y) }
+  *(other) { (other is Float) ? Vector2.new(.x * other, .y * other) : Vector2.new(.x * other.x, .y * other.y) }
+  /(other) { (other is Float) ? Vector2.new(.x / other, .y / other) : Vector2.new(.x / other.x, .y / other.y) }
 
   ==(other) { .x == other.x && .y == other.y }
   !=(other) { .x != other.x || .y != other.y }
 
   to_s { "(%(.x), %(.y))" }
 
-  static unit(angle) { Vector.new(Math.cos(angle), Math.sin(angle)) }
+  static unit(angle) { Vector2.new(Math.cos(angle), Math.sin(angle)) }
   static dot(lhs, rhs) { lhs.x * rhs.x + lhs.y * rhs.y }
 
-  static ZERO { Vector.new(0.0, 0.0) }
+  static ZERO { Vector2.new(0.0, 0.0) }
 }
+
+def vec2(x, y) { Vector2.new(x, y) }
 
 foreign class Color {
   foreign construct new(r, g, b, a)

@@ -40,46 +40,46 @@ static inline double max3(double x, double y, double z) {
 }
 
 /*
- * Vector
+ * Vector2
  */
 
-struct Vector {
+struct Vector2 {
   double x;
   double y;
 };
 
 // class
 
-static ptrdiff_t agVectorAllocate(AgateVM *vm, const char *unit_name, const char *class_name) {
-  return sizeof(struct Vector);
+static ptrdiff_t agVector2Allocate(AgateVM *vm, const char *unit_name, const char *class_name) {
+  return sizeof(struct Vector2);
 }
 
 // methods
 
-static void agVectorNew(AgateVM *vm) {
-  struct Vector *vector = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+static void agVector2New(AgateVM *vm) {
+  struct Vector2 *vector = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
   vector->x = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
   vector->y = agateSlotGetFloat(vm, agateSlotForArg(vm, 2));
 }
 
-static void agVectorXGetter(AgateVM *vm) {
-  struct Vector *vector = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+static void agVector2XGetter(AgateVM *vm) {
+  struct Vector2 *vector = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
   agateSlotSetFloat(vm, agateSlotForReturn(vm), vector->x);
 }
 
-static void agVectorXSetter(AgateVM *vm) {
-  struct Vector *vector = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+static void agVector2XSetter(AgateVM *vm) {
+  struct Vector2 *vector = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
   vector->x = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
   agateSlotSetFloat(vm, agateSlotForReturn(vm), vector->x);
 }
 
-static void agVectorYGetter(AgateVM *vm) {
-  struct Vector *vector = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+static void agVector2YGetter(AgateVM *vm) {
+  struct Vector2 *vector = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
   agateSlotSetFloat(vm, agateSlotForReturn(vm), vector->y);
 }
 
-static void agVectorYSetter(AgateVM *vm) {
-  struct Vector *vector = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+static void agVector2YSetter(AgateVM *vm) {
+  struct Vector2 *vector = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
   vector->y = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
   agateSlotSetFloat(vm, agateSlotForReturn(vm), vector->y);
 }
@@ -274,7 +274,7 @@ void agSurfaceDestroy(AgateVM *vm, const char *unit_name, const char *class_name
 
 static void agSurfaceNew(AgateVM *vm) {
   struct Surface *surface = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  struct Vector *size = agateSlotGetForeign(vm, agateSlotForArg(vm, 1));
+  struct Vector2 *size = agateSlotGetForeign(vm, agateSlotForArg(vm, 1));
   surface->ptr = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, size->x, size->y);
   assert(surface->ptr);
 }
@@ -343,16 +343,16 @@ static void agGradientPatternAddColor(AgateVM *vm) {
 
 static void agLinearGradientPatternNew(AgateVM *vm) {
   struct Pattern *pattern = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  struct Vector *p0 = agateSlotGetForeign(vm, agateSlotForArg(vm, 1));
-  struct Vector *p1 = agateSlotGetForeign(vm, agateSlotForArg(vm, 2));
+  struct Vector2 *p0 = agateSlotGetForeign(vm, agateSlotForArg(vm, 1));
+  struct Vector2 *p1 = agateSlotGetForeign(vm, agateSlotForArg(vm, 2));
   pattern->ptr = cairo_pattern_create_linear(p0->x, p0->y, p1->x, p1->y);
 }
 
 static void agRadialGradientPatternNew(AgateVM *vm) {
   struct Pattern *pattern = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  struct Vector *c0 = agateSlotGetForeign(vm, agateSlotForArg(vm, 1));
+  struct Vector2 *c0 = agateSlotGetForeign(vm, agateSlotForArg(vm, 1));
   double r0 = agateSlotGetFloat(vm, agateSlotForArg(vm, 2));
-  struct Vector *c1 = agateSlotGetForeign(vm, agateSlotForArg(vm, 3));
+  struct Vector2 *c1 = agateSlotGetForeign(vm, agateSlotForArg(vm, 3));
   double r1 = agateSlotGetFloat(vm, agateSlotForArg(vm, 4));
   pattern->ptr = cairo_pattern_create_radial(c0->x, c0->y, r0, c1->x, c1->y, r1);
 }
@@ -589,8 +589,8 @@ static AgateForeignClassHandler agClassHandler(AgateVM *vm, const char *unit_nam
   assert(equals(unit_name, "agraphics"));
   AgateForeignClassHandler handler = { NULL, NULL };
 
-  if (equals(class_name, "Vector")) {
-    handler.allocate = agVectorAllocate;
+  if (equals(class_name, "Vector2")) {
+    handler.allocate = agVector2Allocate;
     return handler;
   }
 
@@ -623,12 +623,12 @@ static AgateForeignClassHandler agClassHandler(AgateVM *vm, const char *unit_nam
 static AgateForeignMethodFunc agMethodHandler(AgateVM *vm, const char *unit_name, const char *class_name, AgateForeignMethodKind kind, const char *signature) {
   assert(equals(unit_name, "agraphics"));
 
-  if (equals(class_name, "Vector")) {
-    if (equals(signature, "init new(_,_)")) { return agVectorNew; }
-    if (equals(signature, "x")) { return agVectorXGetter; }
-    if (equals(signature, "x=(_)")) { return agVectorXSetter; }
-    if (equals(signature, "y")) { return agVectorYGetter; }
-    if (equals(signature, "y=(_)")) { return agVectorYSetter; }
+  if (equals(class_name, "Vector2")) {
+    if (equals(signature, "init new(_,_)")) { return agVector2New; }
+    if (equals(signature, "x")) { return agVector2XGetter; }
+    if (equals(signature, "x=(_)")) { return agVector2XSetter; }
+    if (equals(signature, "y")) { return agVector2YGetter; }
+    if (equals(signature, "y=(_)")) { return agVector2YSetter; }
   }
 
   if (equals(class_name, "Color")) {
