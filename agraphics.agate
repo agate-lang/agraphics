@@ -342,7 +342,7 @@ foreign class Context {
       } else if (elt.command == Path.CURVE_TO) {
         .curve_to(elt[0], elt[1], elt[2])
       } else if (elt.command == Path.CLOSE) {
-        .close()
+        .close_path()
       }
     }
   }
