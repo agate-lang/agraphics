@@ -1,2 +1,2 @@
-# agraphics
-Graphics with Agate
+# agraphics, Graphics with Agate
+

@@ -1,0 +1,3 @@
+[submodule "agate"]
+	path = agate
+	url = https://github.com/agate-lang/agate.git

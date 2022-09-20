@@ -1,0 +1,367 @@
+# agraphics unit
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2022 Julien Bernard
+
+class PathElement {
+  construct new(command, points) {
+    @command = command
+    @points = points
+  }
+
+  command { @command }
+  [index] { @points[index] }
+}
+
+class PathIterator {
+  construct new(command, point) {
+    @command = command
+    @point = point
+  }
+
+  command { @command }
+  point { @point }
+}
+
+class Path {
+  static DISCARD { false }
+  static PRESERVE { true }
+
+  construct new() {
+    @commands = []
+    @points = []
+  }
+
+  curve_to(p0, p1, p2) {
+    @commands.add(Path.CURVE_TO)
+    @points.append_all([ p0, p1, p2 ])
+  }
+
+  line_to(p) {
+    @commands.add(Path.LINE_TO)
+    @points.append(p)
+  }
+
+  move_to(p) {
+    @commands.add(Path.MOVE_TO)
+    @points.append(p)
+  }
+
+  rel_curve_to(p0, p1, p2) {
+    def last = @points[-1]
+    .curve_to(last + p0, last + p1, last + p2)
+  }
+
+  rel_line_to(p) {
+    def last = @points[-1]
+    .line_to(last + p)
+  }
+
+  rel_move_to(p) {
+    def last = @points[-1]
+    .move_to(last + p)
+  }
+
+  close {
+    @commands.add(Path.CLOSE)
+  }
+
+  iterate(iterator) {
+    if (iterator == nil) {
+      return PathIterator.new(0, 0)
+    }
+
+    assert(iterator is PathIterator, "Iterator should be a PathIterator")
+    def command = @commands[iterator.command]
+
+    if (command == Path.MOVE_TO || command == Path.LINE_TO) {
+      iterator = PathIterator.new(iterator.command + 1, iterator.point + 1)
+    } else if (command == Path.CURVE_TO) {
+      iterator = PathIterator.new(iterator.command + 1, iterator.point + 3)
+    } else {
+      iterator = nil
+    }
+
+    return iterator
+  }
+
+  iterator_value(iterator) {
+    assert(iterator is PathIterator, "Iterator should be a PathIterator")
+    def command = @commands[iterator.command]
+
+    if (command == Path.MOVE_TO || command == Path.LINE_TO) {
+      return PathElement.new(command, [ @points[iterator.point] ])
+    }
+
+    if (command == Path.CURVE_TO) {
+      return PathElement.new(command, [ @points[iterator.point], @points[iterator.point + 1], @points[iterator.point + 2] ])
+    }
+
+    if (command == Path.CLOSE) {
+      return PathElement.new(command, [])
+    }
+
+    return nil
+  }
+
+  static MOVE_TO { 1 }
+  static LINE_TO { 2 }
+  static CURVE_TO { 3 }
+  static CLOSE { 4 }
+}
+
+foreign class Vector {
+  foreign construct new(x, y)
+
+  foreign x
+  foreign x=(val)
+  foreign y
+  foreign y=(val)
+
+  +(other) { Vector.new(.x + other.x, .y + other.y) }
+  -(other) { Vector.new(.x - other.x, .y - other.y) }
+
+  *(other) { (other is Float) ? Vector.new(.x * other, .y * other) : Vector.new(.x * other.x, .y * other.y) }
+  /(other) { (other is Float) ? Vector.new(.x / other, .y / other) : Vector.new(.x / other.x, .y / other.y) }
+
+  ==(other) { .x == other.x && .y == other.y }
+  !=(other) { .x != other.x || .y != other.y }
+
+  to_s { "(%(.x), %(.y))" }
+
+  static unit(angle) { Vector.new(Math.cos(angle), Math.sin(angle)) }
+  static dot(lhs, rhs) { lhs.x * rhs.x + lhs.y * rhs.y }
+
+  static ZERO { Vector.new(0.0, 0.0) }
+}
+
+foreign class Color {
+  foreign construct new(r, g, b, a)
+
+  construct new(x) {
+    .r = ((x >> 24) & 0xFF).to_f / 255.0
+    .g = ((x >> 16) & 0xFF).to_f / 255.0
+    .b = ((x >>  8) & 0xFF).to_f / 255.0
+    .a = ((x      ) & 0xFF).to_f / 255.0
+  }
+
+  foreign r
+  foreign r=(val)
+  foreign g
+  foreign g=(val)
+  foreign b
+  foreign b=(val)
+  foreign a
+  foreign a=(val)
+
+  to_s { "[%(.r), %(.g), %(.b), %(.a)]" }
+
+  *(other) { Color.new(.r * other.r, .g * other.g, .b * other.b, .a * other.a) }
+
+  foreign darker(percent)
+
+  static darker(color, percent) {
+    def result = Color.new(color.r, color.g, color.b, color.a)
+    result.darker(percent)
+    return result
+  }
+
+  static darker(color) { .darker(color, 0.5) }
+
+  foreign lighter(percent)
+
+  static lighter(color, percent) {
+    def result = Color.new(color.r, color.g, color.b, color.a)
+    result.lighter(percent)
+    return result
+  }
+
+  static lighter(color) { .lighter(color, 0.5) }
+
+  static BLACK  { Color.new(0.0, 0.0, 0.0, 1.0) }
+  static WHITE  { Color.new(1.0, 1.0, 1.0, 1.0) }
+  static RED    { Color.new(1.0, 0.0, 0.0, 1.0) }
+  static GREEN  { Color.new(0.0, 1.0, 0.0, 1.0) }
+  static BLUE   { Color.new(0.0, 0.0, 1.0, 1.0) }
+  static OPAQUE(a) { Color.new(1.0, 1.0, 1.0, a) }
+}
+
+foreign class Surface {
+  foreign construct new(size)
+  foreign export(filename)
+
+  draw(fn) {
+    def ctx = Context.new(this)
+    fn(ctx)
+  }
+}
+
+class Pattern {
+}
+
+foreign class SolidPattern is Pattern {
+  foreign construct new(color)
+}
+
+foreign class SurfacePattern is Pattern {
+  foreign construct new(surface)
+}
+
+class GradientPattern is Pattern {
+  foreign add_color_stop(offset, color)
+}
+
+foreign class LinearGradientPattern is GradientPattern {
+  foreign construct new(p0, p1)
+}
+
+foreign class RadialGradientPattern is GradientPattern {
+  foreign construct new(c0, r0, c1, r1)
+}
+
+class FillRule {
+  static WINDING  { 0 }
+  static EVEN_ODD { 1 }
+}
+
+class Cap {
+  static BUTT   { 0 }
+  static ROUND  { 1 }
+  static SQUARE { 2 }
+}
+
+class Join {
+ static MITER { 0 }
+ static ROUND { 1 }
+ static BEVEL { 2 }
+}
+
+class Operator {
+  static CLEAR          { 0 }
+  static SOURCE         { 1 }
+  static OVER           { 2 }
+  static IN             { 3 }
+  static OUT            { 4 }
+  static ATOP           { 5 }
+  static DEST           { 6 }
+  static DEST_OVER      { 7 }
+  static DEST_IN        { 8 }
+  static DEST_OUT       { 9 }
+  static DEST_ATOP      { 10 }
+  static XOR            { 11 }
+  static ADD            { 12 }
+  static SATURATE       { 13 }
+  static MULTIPLY       { 14 }
+  static SCREEN         { 15 }
+  static OVERLAY        { 16 }
+  static DARKEN         { 17 }
+  static LIGHTEN        { 18 }
+  static COLOR_DODGE    { 19 }
+  static COLOR_BURN     { 20 }
+  static HARD_LIGHT     { 21 }
+  static SOFT_LIGHT     { 22 }
+  static DIFFERENCE     { 23 }
+  static EXCLUSION      { 24 }
+  static HSL_HUE        { 25 }
+  static HSL_SATURATION { 26 }
+  static HSL_COLOR      { 27 }
+  static HSL_LUMINOSITY { 28 }
+}
+
+class Antialias {
+  static DEFAULT  { 0 }
+  # method
+  static NONE     { 1 }
+  static GRAY     { 2 }
+  static SUBPIXEL { 3 }
+  # hints
+  static FAST     { 4 }
+  static GOOD     { 5 }
+  static BEST     { 6 }
+}
+
+foreign class Context {
+  foreign construct new(surface)
+
+  # state
+
+  foreign save()
+  foreign restore()
+
+  # matrix
+
+  foreign translate(x, y)
+  translate(vec) { .translate(vec.x, vec.y) }
+  foreign scale(x, y)
+  scale(vec) { .scale(vec.x, vec.y) }
+  foreign rotate(angle)
+
+  # source
+
+  foreign set_source_color(color)
+  foreign set_source_pattern(pattern)
+
+  # style
+
+  foreign set_antialias(antialias)
+  foreign set_fill_rule(rule)
+  foreign set_line_cap(cap)
+  foreign set_line_join(join)
+  foreign set_line_width(width)
+  foreign set_miter_limit(limit)
+  foreign set_operator(operator)
+
+  # draw
+
+  foreign clip(preserve)
+  clip() { .clip(Path.DISCARD) }
+
+  foreign fill(preserve)
+  fill() { .fill(Path.DISCARD) }
+
+  foreign stroke(preserve)
+  stroke() { .stroke(Path.DISCARD) }
+
+  foreign paint()
+
+  # path handling
+
+  foreign move_to(x, y)
+  move_to(p) { .move_to(p.x, p.y) }
+  foreign line_to(x, y)
+  line_to(p) { .line_to(p.x, p.y) }
+  foreign curve_to(x1, y1, x2, y2, x3, y3)
+  curve_to(p1, p2, p3) { .curve_to(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y) }
+  foreign close_path()
+
+  set_path(path) {
+    for (elt in path) {
+      if (elt.command == Path.MOVE_TO) {
+        .move_to(elt[0])
+      } else if (elt.command == Path.LINE_TO) {
+        .line_to(elt[0])
+      } else if (elt.command == Path.CURVE_TO) {
+        .curve_to(elt[0], elt[1], elt[2])
+      } else if (elt.command == Path.CLOSE) {
+        .close()
+      }
+    }
+  }
+
+  foreign arc(xc, yc, radius, angle1, angle2)
+  foreign arc_negative(xc, yc, radius, angle1, angle2)
+
+  circle(xc, yc, radius) { .arc(xc, yc, radius, 0.0, 2.0 * Math.PI) }
+  circle(center, radius) { .circle(center.x, center.y, radius) }
+
+  # high level draw
+
+  sub(fn) {
+    .save()
+    fn(this)
+    .restore()
+  }
+
+  draw(fn) {
+    fn(this)
+  }
+}
