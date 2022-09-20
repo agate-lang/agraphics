@@ -351,6 +351,8 @@ foreign class Context {
     }
   }
 
+  foreign rectangle(x, y, width, height)
+  rectangle(position, size) { .rectangle(position.x, position.y, size.x, size.y) }
   foreign arc(xc, yc, radius, angle1, angle2)
   foreign arc_negative(xc, yc, radius, angle1, angle2)
 

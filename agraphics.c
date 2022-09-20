@@ -557,6 +557,15 @@ static void agContextClosePath(AgateVM *vm) {
   cairo_close_path(context->ptr);
 }
 
+static void agContextRectangle(AgateVM *vm) {
+  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+  double x = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
+  double y = agateSlotGetFloat(vm, agateSlotForArg(vm, 2));
+  double width = agateSlotGetFloat(vm, agateSlotForArg(vm, 3));
+  double height = agateSlotGetFloat(vm, agateSlotForArg(vm, 4));
+  cairo_rectangle(context->ptr, x, y, width, height);
+}
+
 static void agContextArc(AgateVM *vm) {
   struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
   double xc = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
@@ -696,6 +705,7 @@ static AgateForeignMethodFunc agMethodHandler(AgateVM *vm, const char *unit_name
     if (equals(signature, "line_to(_,_)")) { return agContextLineTo; }
     if (equals(signature, "curve_to(_,_,_,_,_,_)")) { return agContextCurveTo; }
     if (equals(signature, "close_path()")) { return agContextClosePath; }
+    if (equals(signature, "rectangle(_,_,_,_)")) { return agContextRectangle; }
     if (equals(signature, "arc(_,_,_,_,_)")) { return agContextArc; }
     if (equals(signature, "arc_negative(_,_,_,_,_)")) { return agContextArcNegative; }
   }
