@@ -85,6 +85,87 @@ static void agVector2YSetter(AgateVM *vm) {
 }
 
 /*
+ * Matrix
+ */
+
+// class
+
+static ptrdiff_t agMatrixAllocate(AgateVM *vm, const char *unit_name, const char *class_name) {
+  return sizeof(cairo_matrix_t);
+}
+
+// methods
+
+static void agMatrixNew(AgateVM *vm) {
+  cairo_matrix_t *matrix = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+  cairo_matrix_init_identity(matrix);
+}
+
+static void agMatrixNewTranslate(AgateVM *vm) {
+  cairo_matrix_t *matrix = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+  double tx = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
+  double ty = agateSlotGetFloat(vm, agateSlotForArg(vm, 2));
+  cairo_matrix_init_translate(matrix, tx, ty);
+}
+
+static void agMatrixNewScale(AgateVM *vm) {
+  cairo_matrix_t *matrix = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+  double sx = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
+  double sy = agateSlotGetFloat(vm, agateSlotForArg(vm, 2));
+  cairo_matrix_init_scale(matrix, sx, sy);
+}
+
+static void agMatrixNewRotate(AgateVM *vm) {
+  cairo_matrix_t *matrix = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+  double angle = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
+  cairo_matrix_init_rotate(matrix, angle);
+}
+
+static void agMatrixTranslate(AgateVM *vm) {
+  cairo_matrix_t *matrix = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+  double tx = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
+  double ty = agateSlotGetFloat(vm, agateSlotForArg(vm, 2));
+  cairo_matrix_translate(matrix, tx, ty);
+}
+
+static void agMatrixScale(AgateVM *vm) {
+  cairo_matrix_t *matrix = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+  double sx = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
+  double sy = agateSlotGetFloat(vm, agateSlotForArg(vm, 2));
+  cairo_matrix_scale(matrix, sx, sy);
+}
+
+static void agMatrixRotate(AgateVM *vm) {
+  cairo_matrix_t *matrix = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+  double angle = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
+  cairo_matrix_rotate(matrix, angle);
+}
+
+static void agMatrixInvert(AgateVM *vm) {
+  cairo_matrix_t *matrix = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+
+  if (cairo_matrix_invert(matrix) != CAIRO_STATUS_SUCCESS) {
+    ptrdiff_t string_slot = agateSlotAllocate(vm);
+    agateSlotSetString(vm, string_slot, "Unable to invert the matrix");
+    agateAbort(vm, string_slot);
+  }
+}
+
+static void agMatrixMultiply(AgateVM *vm) {
+  cairo_matrix_t *matrix = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+  cairo_matrix_t *other = agateSlotGetForeign(vm, agateSlotForArg(vm, 1));
+
+  ptrdiff_t class_slot = agateSlotAllocate(vm);
+  agateGetVariable(vm, "agraphics", "Matrix", class_slot);
+
+  ptrdiff_t result_slot = agateSlotAllocate(vm);
+  cairo_matrix_t *result = agateSlotSetForeign(vm, result_slot, class_slot);
+  cairo_matrix_multiply(result, matrix, other);
+
+  agateSlotCopy(vm, agateSlotForReturn(vm), result_slot);
+}
+
+/*
  * Color
  */
 
@@ -322,6 +403,12 @@ void agPatternDestroy(AgateVM *vm, const char *unit_name, const char *class_name
 
 // methods
 
+static void agPatternSetMatrix(AgateVM *vm) {
+  struct Pattern *pattern = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+  cairo_matrix_t *matrix = agateSlotGetForeign(vm, agateSlotForArg(vm, 1));
+  cairo_pattern_set_matrix(pattern->ptr, matrix);
+}
+
 static void agSolidPatternNew(AgateVM *vm) {
   struct Pattern *pattern = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
   struct Color *color = agateSlotGetForeign(vm, agateSlotForArg(vm, 1));
@@ -398,6 +485,20 @@ static void agContextRestore(AgateVM *vm) {
   struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
   cairo_restore(context->ptr);
 }
+
+// group
+
+static void agContextPushGroup(AgateVM *vm) {
+  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+  cairo_push_group(context->ptr);
+}
+
+static void agContextPopGroupToSource(AgateVM *vm) {
+  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+  cairo_pop_group_to_source(context->ptr);
+}
+
+// matrix
 
 static void agContextTranslate(AgateVM *vm) {
   struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
@@ -525,6 +626,12 @@ static void agContextPaint(AgateVM *vm) {
   cairo_paint(context->ptr);
 }
 
+static void agContextPaintWithAlpha(AgateVM *vm) {
+  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+  double alpha = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
+  cairo_paint_with_alpha(context->ptr, alpha);
+}
+
 // path
 
 static void agContextMoveTo(AgateVM *vm) {
@@ -603,6 +710,11 @@ static AgateForeignClassHandler agClassHandler(AgateVM *vm, const char *unit_nam
     return handler;
   }
 
+  if (equals(class_name, "Matrix")) {
+    handler.allocate = agMatrixAllocate;
+    return handler;
+  }
+
   if (equals(class_name, "Color")) {
     handler.allocate = agColorAllocate;
     return handler;
@@ -640,6 +752,18 @@ static AgateForeignMethodFunc agMethodHandler(AgateVM *vm, const char *unit_name
     if (equals(signature, "y=(_)")) { return agVector2YSetter; }
   }
 
+  if (equals(class_name, "Matrix")) {
+    if (equals(signature, "init new()")) { return agMatrixNew; }
+    if (equals(signature, "init new_translate(_,_)")) { return agMatrixNewTranslate; }
+    if (equals(signature, "init new_scale(_,_)")) { return agMatrixNewScale; }
+    if (equals(signature, "init new_rotate(_)")) { return agMatrixNewRotate; }
+    if (equals(signature, "translate(_,_)")) { return agMatrixTranslate; }
+    if (equals(signature, "scale(_,_)")) { return agMatrixScale; }
+    if (equals(signature, "rotate(_)")) { return agMatrixRotate; }
+    if (equals(signature, "invert()")) { return agMatrixInvert; }
+    if (equals(signature, "*(_)")) { return agMatrixMultiply; }
+  }
+
   if (equals(class_name, "Color")) {
     if (equals(signature, "init new(_,_,_,_)")) { return agColorNew; }
     if (equals(signature, "r")) { return agColorRGetter; }
@@ -658,6 +782,10 @@ static AgateForeignMethodFunc agMethodHandler(AgateVM *vm, const char *unit_name
     if (equals(signature, "init new(_)")) { return agSurfaceNew; }
     if (equals(signature, "init new_from_png(_)")) { return agSurfaceNewFromPng; }
     if (equals(signature, "export(_)")) { return agSurfaceExport; }
+  }
+
+  if (equals(class_name, "Pattern")) {
+    if (equals(signature, "set_matrix(_)")) { return agPatternSetMatrix; }
   }
 
   if (equals(class_name, "SolidPattern")) {
@@ -684,6 +812,8 @@ static AgateForeignMethodFunc agMethodHandler(AgateVM *vm, const char *unit_name
     if (equals(signature, "init new(_)")) { return agContextNew; }
     if (equals(signature, "save()")) { return agContextSave; }
     if (equals(signature, "restore()")) { return agContextRestore; }
+    if (equals(signature, "push_group()")) { return agContextPushGroup; }
+    if (equals(signature, "pop_group_to_source()")) { return agContextPopGroupToSource; }
     if (equals(signature, "translate(_,_)")) { return agContextTranslate; }
     if (equals(signature, "scale(_,_)")) { return agContextScale; }
     if (equals(signature, "rotate(_)")) { return agContextRotate; }
@@ -701,6 +831,7 @@ static AgateForeignMethodFunc agMethodHandler(AgateVM *vm, const char *unit_name
     if (equals(signature, "fill(_)")) { return agContextFill; }
     if (equals(signature, "stroke(_)")) { return agContextStroke; }
     if (equals(signature, "paint()")) { return agContextPaint; }
+    if (equals(signature, "paint_with_alpha(_)")) { return agContextPaintWithAlpha; }
     if (equals(signature, "move_to(_,_)")) { return agContextMoveTo; }
     if (equals(signature, "line_to(_,_)")) { return agContextLineTo; }
     if (equals(signature, "curve_to(_,_,_,_,_,_)")) { return agContextCurveTo; }

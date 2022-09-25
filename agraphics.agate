@@ -136,6 +136,21 @@ foreign class Vector2 {
 
 def vec2(x, y) { Vector2.new(x, y) }
 
+foreign class Matrix {
+  foreign construct new() # identity
+  foreign construct new_translate(tx, ty)
+  foreign construct new_scale(sx, sy)
+  foreign construct new_rotate(angle)
+
+  foreign translate(tx, ty)
+  foreign scale(sx, sy)
+  foreign rotate(angle)
+
+  foreign invert()
+
+  foreign *(other)
+}
+
 foreign class Color {
   foreign construct new(r, g, b, a)
 
@@ -199,6 +214,7 @@ foreign class Surface {
 }
 
 class Pattern {
+  foreign set_matrix(matrix)
 }
 
 foreign class SolidPattern is Pattern {
@@ -290,6 +306,11 @@ foreign class Context {
   foreign save()
   foreign restore()
 
+  # group
+
+  foreign push_group()
+  foreign pop_group_to_source()
+
   # matrix
 
   foreign translate(x, y)
@@ -326,6 +347,7 @@ foreign class Context {
   stroke() { .stroke(Path.DISCARD) }
 
   foreign paint()
+  foreign paint_with_alpha(alpha)
 
   # path handling
 
