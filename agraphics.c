@@ -57,31 +57,31 @@ static ptrdiff_t agVector2Allocate(AgateVM *vm, const char *unit_name, const cha
 // methods
 
 static void agVector2New(AgateVM *vm) {
-  struct Vector2 *vector = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  vector->x = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
-  vector->y = agateSlotGetFloat(vm, agateSlotForArg(vm, 2));
+  struct Vector2 *vector = agateSlotGetForeign(vm, 0);
+  vector->x = agateSlotGetFloat(vm, 1);
+  vector->y = agateSlotGetFloat(vm, 2);
 }
 
 static void agVector2XGetter(AgateVM *vm) {
-  struct Vector2 *vector = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  agateSlotSetFloat(vm, agateSlotForReturn(vm), vector->x);
+  struct Vector2 *vector = agateSlotGetForeign(vm, 0);
+  agateSlotSetFloat(vm, AGATE_RETURN_SLOT, vector->x);
 }
 
 static void agVector2XSetter(AgateVM *vm) {
-  struct Vector2 *vector = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  vector->x = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
-  agateSlotSetFloat(vm, agateSlotForReturn(vm), vector->x);
+  struct Vector2 *vector = agateSlotGetForeign(vm, 0);
+  vector->x = agateSlotGetFloat(vm, 1);
+  agateSlotSetFloat(vm, AGATE_RETURN_SLOT, vector->x);
 }
 
 static void agVector2YGetter(AgateVM *vm) {
-  struct Vector2 *vector = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  agateSlotSetFloat(vm, agateSlotForReturn(vm), vector->y);
+  struct Vector2 *vector = agateSlotGetForeign(vm, 0);
+  agateSlotSetFloat(vm, AGATE_RETURN_SLOT, vector->y);
 }
 
 static void agVector2YSetter(AgateVM *vm) {
-  struct Vector2 *vector = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  vector->y = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
-  agateSlotSetFloat(vm, agateSlotForReturn(vm), vector->y);
+  struct Vector2 *vector = agateSlotGetForeign(vm, 0);
+  vector->y = agateSlotGetFloat(vm, 1);
+  agateSlotSetFloat(vm, AGATE_RETURN_SLOT, vector->y);
 }
 
 /*
@@ -97,52 +97,52 @@ static ptrdiff_t agMatrixAllocate(AgateVM *vm, const char *unit_name, const char
 // methods
 
 static void agMatrixNew(AgateVM *vm) {
-  cairo_matrix_t *matrix = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+  cairo_matrix_t *matrix = agateSlotGetForeign(vm, 0);
   cairo_matrix_init_identity(matrix);
 }
 
 static void agMatrixNewTranslate(AgateVM *vm) {
-  cairo_matrix_t *matrix = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  double tx = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
-  double ty = agateSlotGetFloat(vm, agateSlotForArg(vm, 2));
+  cairo_matrix_t *matrix = agateSlotGetForeign(vm, 0);
+  double tx = agateSlotGetFloat(vm, 1);
+  double ty = agateSlotGetFloat(vm, 2);
   cairo_matrix_init_translate(matrix, tx, ty);
 }
 
 static void agMatrixNewScale(AgateVM *vm) {
-  cairo_matrix_t *matrix = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  double sx = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
-  double sy = agateSlotGetFloat(vm, agateSlotForArg(vm, 2));
+  cairo_matrix_t *matrix = agateSlotGetForeign(vm, 0);
+  double sx = agateSlotGetFloat(vm, 1);
+  double sy = agateSlotGetFloat(vm, 2);
   cairo_matrix_init_scale(matrix, sx, sy);
 }
 
 static void agMatrixNewRotate(AgateVM *vm) {
-  cairo_matrix_t *matrix = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  double angle = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
+  cairo_matrix_t *matrix = agateSlotGetForeign(vm, 0);
+  double angle = agateSlotGetFloat(vm, 1);
   cairo_matrix_init_rotate(matrix, angle);
 }
 
 static void agMatrixTranslate(AgateVM *vm) {
-  cairo_matrix_t *matrix = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  double tx = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
-  double ty = agateSlotGetFloat(vm, agateSlotForArg(vm, 2));
+  cairo_matrix_t *matrix = agateSlotGetForeign(vm, 0);
+  double tx = agateSlotGetFloat(vm, 1);
+  double ty = agateSlotGetFloat(vm, 2);
   cairo_matrix_translate(matrix, tx, ty);
 }
 
 static void agMatrixScale(AgateVM *vm) {
-  cairo_matrix_t *matrix = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  double sx = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
-  double sy = agateSlotGetFloat(vm, agateSlotForArg(vm, 2));
+  cairo_matrix_t *matrix = agateSlotGetForeign(vm, 0);
+  double sx = agateSlotGetFloat(vm, 1);
+  double sy = agateSlotGetFloat(vm, 2);
   cairo_matrix_scale(matrix, sx, sy);
 }
 
 static void agMatrixRotate(AgateVM *vm) {
-  cairo_matrix_t *matrix = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  double angle = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
+  cairo_matrix_t *matrix = agateSlotGetForeign(vm, 0);
+  double angle = agateSlotGetFloat(vm, 1);
   cairo_matrix_rotate(matrix, angle);
 }
 
 static void agMatrixInvert(AgateVM *vm) {
-  cairo_matrix_t *matrix = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+  cairo_matrix_t *matrix = agateSlotGetForeign(vm, 0);
 
   if (cairo_matrix_invert(matrix) != CAIRO_STATUS_SUCCESS) {
     ptrdiff_t string_slot = agateSlotAllocate(vm);
@@ -152,8 +152,8 @@ static void agMatrixInvert(AgateVM *vm) {
 }
 
 static void agMatrixMultiply(AgateVM *vm) {
-  cairo_matrix_t *matrix = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  cairo_matrix_t *other = agateSlotGetForeign(vm, agateSlotForArg(vm, 1));
+  cairo_matrix_t *matrix = agateSlotGetForeign(vm, 0);
+  cairo_matrix_t *other = agateSlotGetForeign(vm, 1);
 
   ptrdiff_t class_slot = agateSlotAllocate(vm);
   agateGetVariable(vm, "agraphics", "Matrix", class_slot);
@@ -162,7 +162,7 @@ static void agMatrixMultiply(AgateVM *vm) {
   cairo_matrix_t *result = agateSlotSetForeign(vm, result_slot, class_slot);
   cairo_matrix_multiply(result, matrix, other);
 
-  agateSlotCopy(vm, agateSlotForReturn(vm), result_slot);
+  agateSlotCopy(vm, AGATE_RETURN_SLOT, result_slot);
 }
 
 /*
@@ -185,55 +185,55 @@ static ptrdiff_t agColorAllocate(AgateVM *vm, const char *unit_name, const char 
 // methods
 
 static void agColorNew(AgateVM *vm) {
-  struct Color *color = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  color->r = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
-  color->g = agateSlotGetFloat(vm, agateSlotForArg(vm, 2));
-  color->b = agateSlotGetFloat(vm, agateSlotForArg(vm, 3));
-  color->a = agateSlotGetFloat(vm, agateSlotForArg(vm, 4));
+  struct Color *color = agateSlotGetForeign(vm, 0);
+  color->r = agateSlotGetFloat(vm, 1);
+  color->g = agateSlotGetFloat(vm, 2);
+  color->b = agateSlotGetFloat(vm, 3);
+  color->a = agateSlotGetFloat(vm, 4);
 }
 
 static void agColorRGetter(AgateVM *vm) {
-  struct Color *color = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  agateSlotSetFloat(vm, agateSlotForReturn(vm), color->r);
+  struct Color *color = agateSlotGetForeign(vm, 0);
+  agateSlotSetFloat(vm, AGATE_RETURN_SLOT, color->r);
 }
 
 static void agColorRSetter(AgateVM *vm) {
-  struct Color *color = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  color->r = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
-  agateSlotSetFloat(vm, agateSlotForReturn(vm), color->r);
+  struct Color *color = agateSlotGetForeign(vm, 0);
+  color->r = agateSlotGetFloat(vm, 1);
+  agateSlotSetFloat(vm, AGATE_RETURN_SLOT, color->r);
 }
 
 static void agColorGGetter(AgateVM *vm) {
-  struct Color *color = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  agateSlotSetFloat(vm, agateSlotForReturn(vm), color->g);
+  struct Color *color = agateSlotGetForeign(vm, 0);
+  agateSlotSetFloat(vm, AGATE_RETURN_SLOT, color->g);
 }
 
 static void agColorGSetter(AgateVM *vm) {
-  struct Color *color = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  color->g = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
-  agateSlotSetFloat(vm, agateSlotForReturn(vm), color->g);
+  struct Color *color = agateSlotGetForeign(vm, 0);
+  color->g = agateSlotGetFloat(vm, 1);
+  agateSlotSetFloat(vm, AGATE_RETURN_SLOT, color->g);
 }
 
 static void agColorBGetter(AgateVM *vm) {
-  struct Color *color = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  agateSlotSetFloat(vm, agateSlotForReturn(vm), color->b);
+  struct Color *color = agateSlotGetForeign(vm, 0);
+  agateSlotSetFloat(vm, AGATE_RETURN_SLOT, color->b);
 }
 
 static void agColorBSetter(AgateVM *vm) {
-  struct Color *color = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  color->b = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
-  agateSlotSetFloat(vm, agateSlotForReturn(vm), color->b);
+  struct Color *color = agateSlotGetForeign(vm, 0);
+  color->b = agateSlotGetFloat(vm, 1);
+  agateSlotSetFloat(vm, AGATE_RETURN_SLOT, color->b);
 }
 
 static void agColorAGetter(AgateVM *vm) {
-  struct Color *color = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  agateSlotSetFloat(vm, agateSlotForReturn(vm), color->a);
+  struct Color *color = agateSlotGetForeign(vm, 0);
+  agateSlotSetFloat(vm, AGATE_RETURN_SLOT, color->a);
 }
 
 static void agColorASetter(AgateVM *vm) {
-  struct Color *color = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  color->a = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
-  agateSlotSetFloat(vm, agateSlotForReturn(vm), color->a);
+  struct Color *color = agateSlotGetForeign(vm, 0);
+  color->a = agateSlotGetFloat(vm, 1);
+  agateSlotSetFloat(vm, AGATE_RETURN_SLOT, color->a);
 }
 
 struct HSV {
@@ -297,8 +297,8 @@ static void agConvertHsvToRgb(struct Color *color, const struct HSV *hsv) {
 }
 
 static void agColorDarker(AgateVM *vm) {
-  struct Color *color = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  double percent = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
+  struct Color *color = agateSlotGetForeign(vm, 0);
+  double percent = agateSlotGetFloat(vm, 1);
 
   struct HSV hsv;
   agConvertRgbToHsv(&hsv, color);
@@ -307,8 +307,8 @@ static void agColorDarker(AgateVM *vm) {
 }
 
 static void agColorLighter(AgateVM* vm) {
-  struct Color *color = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  double percent = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
+  struct Color *color = agateSlotGetForeign(vm, 0);
+  double percent = agateSlotGetFloat(vm, 1);
 
   struct HSV hsv;
   agConvertRgbToHsv(&hsv, color);
@@ -354,22 +354,22 @@ void agSurfaceDestroy(AgateVM *vm, const char *unit_name, const char *class_name
 // methods
 
 static void agSurfaceNew(AgateVM *vm) {
-  struct Surface *surface = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  struct Vector2 *size = agateSlotGetForeign(vm, agateSlotForArg(vm, 1));
+  struct Surface *surface = agateSlotGetForeign(vm, 0);
+  struct Vector2 *size = agateSlotGetForeign(vm, 1);
   surface->ptr = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, size->x, size->y);
   assert(surface->ptr);
 }
 
 static void agSurfaceNewFromPng(AgateVM *vm) {
-  struct Surface *surface = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  const char *filename = agateSlotGetString(vm, agateSlotForArg(vm, 1));
+  struct Surface *surface = agateSlotGetForeign(vm, 0);
+  const char *filename = agateSlotGetString(vm, 1);
   surface->ptr = cairo_image_surface_create_from_png(filename);
   assert(surface->ptr);
 }
 
 static void agSurfaceExport(AgateVM *vm) {
-  struct Surface *surface = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  const char *filename = agateSlotGetString(vm, agateSlotForArg(vm, 1));
+  struct Surface *surface = agateSlotGetForeign(vm, 0);
+  const char *filename = agateSlotGetString(vm, 1);
   cairo_status_t status = cairo_surface_write_to_png(surface->ptr, filename);
 
   if (status != CAIRO_STATUS_SUCCESS) {
@@ -404,43 +404,43 @@ void agPatternDestroy(AgateVM *vm, const char *unit_name, const char *class_name
 // methods
 
 static void agPatternSetMatrix(AgateVM *vm) {
-  struct Pattern *pattern = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  cairo_matrix_t *matrix = agateSlotGetForeign(vm, agateSlotForArg(vm, 1));
+  struct Pattern *pattern = agateSlotGetForeign(vm, 0);
+  cairo_matrix_t *matrix = agateSlotGetForeign(vm, 1);
   cairo_pattern_set_matrix(pattern->ptr, matrix);
 }
 
 static void agSolidPatternNew(AgateVM *vm) {
-  struct Pattern *pattern = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  struct Color *color = agateSlotGetForeign(vm, agateSlotForArg(vm, 1));
+  struct Pattern *pattern = agateSlotGetForeign(vm, 0);
+  struct Color *color = agateSlotGetForeign(vm, 1);
   pattern->ptr = cairo_pattern_create_rgba(color->r, color->g, color->b, color->a);
 }
 
 static void agSurfacePatternNew(AgateVM *vm) {
-  struct Pattern *pattern = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  struct Surface *surface = agateSlotGetForeign(vm, agateSlotForArg(vm, 1));
+  struct Pattern *pattern = agateSlotGetForeign(vm, 0);
+  struct Surface *surface = agateSlotGetForeign(vm, 1);
   pattern->ptr = cairo_pattern_create_for_surface(surface->ptr);
 }
 
 static void agGradientPatternAddColor(AgateVM *vm) {
-  struct Pattern *pattern = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  double offset = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
-  struct Color *color = agateSlotGetForeign(vm, agateSlotForArg(vm, 2));
+  struct Pattern *pattern = agateSlotGetForeign(vm, 0);
+  double offset = agateSlotGetFloat(vm, 1);
+  struct Color *color = agateSlotGetForeign(vm, 2);
   cairo_pattern_add_color_stop_rgba(pattern->ptr, offset, color->r, color->g, color->b, color->a);
 }
 
 static void agLinearGradientPatternNew(AgateVM *vm) {
-  struct Pattern *pattern = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  struct Vector2 *p0 = agateSlotGetForeign(vm, agateSlotForArg(vm, 1));
-  struct Vector2 *p1 = agateSlotGetForeign(vm, agateSlotForArg(vm, 2));
+  struct Pattern *pattern = agateSlotGetForeign(vm, 0);
+  struct Vector2 *p0 = agateSlotGetForeign(vm, 1);
+  struct Vector2 *p1 = agateSlotGetForeign(vm, 2);
   pattern->ptr = cairo_pattern_create_linear(p0->x, p0->y, p1->x, p1->y);
 }
 
 static void agRadialGradientPatternNew(AgateVM *vm) {
-  struct Pattern *pattern = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  struct Vector2 *c0 = agateSlotGetForeign(vm, agateSlotForArg(vm, 1));
-  double r0 = agateSlotGetFloat(vm, agateSlotForArg(vm, 2));
-  struct Vector2 *c1 = agateSlotGetForeign(vm, agateSlotForArg(vm, 3));
-  double r1 = agateSlotGetFloat(vm, agateSlotForArg(vm, 4));
+  struct Pattern *pattern = agateSlotGetForeign(vm, 0);
+  struct Vector2 *c0 = agateSlotGetForeign(vm, 1);
+  double r0 = agateSlotGetFloat(vm, 2);
+  struct Vector2 *c1 = agateSlotGetForeign(vm, 3);
+  double r1 = agateSlotGetFloat(vm, 4);
   pattern->ptr = cairo_pattern_create_radial(c0->x, c0->y, r0, c1->x, c1->y, r1);
 }
 
@@ -471,126 +471,126 @@ void agContextDestroy(AgateVM *vm, const char *unit_name, const char *class_name
 // methods
 
 static void agContextNew(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  struct Surface *surface = agateSlotGetForeign(vm, agateSlotForArg(vm, 1));
+  struct Context *context = agateSlotGetForeign(vm, 0);
+  struct Surface *surface = agateSlotGetForeign(vm, 1);
   context->ptr = cairo_create(surface->ptr);
 }
 
 static void agContextSave(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+  struct Context *context = agateSlotGetForeign(vm, 0);
   cairo_save(context->ptr);
 }
 
 static void agContextRestore(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+  struct Context *context = agateSlotGetForeign(vm, 0);
   cairo_restore(context->ptr);
 }
 
 // group
 
 static void agContextPushGroup(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+  struct Context *context = agateSlotGetForeign(vm, 0);
   cairo_push_group(context->ptr);
 }
 
 static void agContextPopGroupToSource(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+  struct Context *context = agateSlotGetForeign(vm, 0);
   cairo_pop_group_to_source(context->ptr);
 }
 
 // matrix
 
 static void agContextTranslate(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  double tx = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
-  double ty = agateSlotGetFloat(vm, agateSlotForArg(vm, 2));
+  struct Context *context = agateSlotGetForeign(vm, 0);
+  double tx = agateSlotGetFloat(vm, 1);
+  double ty = agateSlotGetFloat(vm, 2);
   cairo_translate(context->ptr, tx, ty);
 }
 
 static void agContextScale(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  double sx = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
-  double sy = agateSlotGetFloat(vm, agateSlotForArg(vm, 2));
+  struct Context *context = agateSlotGetForeign(vm, 0);
+  double sx = agateSlotGetFloat(vm, 1);
+  double sy = agateSlotGetFloat(vm, 2);
   cairo_scale(context->ptr, sx, sy);
 }
 
 static void agContextRotate(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  double angle = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
+  struct Context *context = agateSlotGetForeign(vm, 0);
+  double angle = agateSlotGetFloat(vm, 1);
   cairo_rotate(context->ptr, angle);
 }
 
 // source
 
 static void agContextSetSourceColor(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  struct Color *color = agateSlotGetForeign(vm, agateSlotForArg(vm, 1));
+  struct Context *context = agateSlotGetForeign(vm, 0);
+  struct Color *color = agateSlotGetForeign(vm, 1);
   cairo_set_source_rgba(context->ptr, color->r, color->g, color->b, color->a);
 }
 
 static void agContextSetSourceSurface(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  struct Surface *surface = agateSlotGetForeign(vm, agateSlotForArg(vm, 1));
-  double x = agateSlotGetFloat(vm, agateSlotForArg(vm, 2));
-  double y = agateSlotGetFloat(vm, agateSlotForArg(vm, 3));
+  struct Context *context = agateSlotGetForeign(vm, 0);
+  struct Surface *surface = agateSlotGetForeign(vm, 1);
+  double x = agateSlotGetFloat(vm, 2);
+  double y = agateSlotGetFloat(vm, 3);
   cairo_set_source_surface(context->ptr, surface->ptr, x, y);
 }
 
 static void agContextSetSourcePattern(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  struct Pattern *pattern = agateSlotGetForeign(vm, agateSlotForArg(vm, 1));
+  struct Context *context = agateSlotGetForeign(vm, 0);
+  struct Pattern *pattern = agateSlotGetForeign(vm, 1);
   cairo_set_source(context->ptr, pattern->ptr);
 }
 
 // style
 
 static void agContextSetAntialias(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  int64_t raw = agateSlotGetInt(vm, agateSlotForArg(vm, 1));
+  struct Context *context = agateSlotGetForeign(vm, 0);
+  int64_t raw = agateSlotGetInt(vm, 1);
   cairo_set_antialias(context->ptr, (cairo_antialias_t) raw);
 }
 
 static void agContextSetFillRule(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  int64_t raw = agateSlotGetInt(vm, agateSlotForArg(vm, 1));
+  struct Context *context = agateSlotGetForeign(vm, 0);
+  int64_t raw = agateSlotGetInt(vm, 1);
   cairo_set_fill_rule(context->ptr, (cairo_fill_rule_t) raw);
 }
 
 static void agContextSetLineCap(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  int64_t raw = agateSlotGetInt(vm, agateSlotForArg(vm, 1));
+  struct Context *context = agateSlotGetForeign(vm, 0);
+  int64_t raw = agateSlotGetInt(vm, 1);
   cairo_set_line_cap(context->ptr, (cairo_line_cap_t) raw);
 }
 
 static void agContextSetLineJoin(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  int64_t raw = agateSlotGetInt(vm, agateSlotForArg(vm, 1));
+  struct Context *context = agateSlotGetForeign(vm, 0);
+  int64_t raw = agateSlotGetInt(vm, 1);
   cairo_set_line_join(context->ptr, (cairo_line_join_t) raw);
 }
 
 static void agContextSetLineWidth(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  double width = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
+  struct Context *context = agateSlotGetForeign(vm, 0);
+  double width = agateSlotGetFloat(vm, 1);
   cairo_set_line_width(context->ptr, width);
 }
 
 static void agContextSetMiterLimit(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  double limit = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
+  struct Context *context = agateSlotGetForeign(vm, 0);
+  double limit = agateSlotGetFloat(vm, 1);
   cairo_set_miter_limit(context->ptr, limit);
 }
 
 static void agContextSetOperator(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  int64_t raw = agateSlotGetInt(vm, agateSlotForArg(vm, 1));
+  struct Context *context = agateSlotGetForeign(vm, 0);
+  int64_t raw = agateSlotGetInt(vm, 1);
   cairo_set_operator(context->ptr, (cairo_operator_t) raw);
 }
 
 // draw
 
 static void agContextClip(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  bool preserve = agateSlotGetBool(vm, agateSlotForArg(vm, 1));
+  struct Context *context = agateSlotGetForeign(vm, 0);
+  bool preserve = agateSlotGetBool(vm, 1);
 
   if (preserve) {
     cairo_clip_preserve(context->ptr);
@@ -600,8 +600,8 @@ static void agContextClip(AgateVM *vm) {
 }
 
 static void agContextFill(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  bool preserve = agateSlotGetBool(vm, agateSlotForArg(vm, 1));
+  struct Context *context = agateSlotGetForeign(vm, 0);
+  bool preserve = agateSlotGetBool(vm, 1);
 
   if (preserve) {
     cairo_fill_preserve(context->ptr);
@@ -611,8 +611,8 @@ static void agContextFill(AgateVM *vm) {
 }
 
 static void agContextStroke(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  bool preserve = agateSlotGetBool(vm, agateSlotForArg(vm, 1));
+  struct Context *context = agateSlotGetForeign(vm, 0);
+  bool preserve = agateSlotGetBool(vm, 1);
 
   if (preserve) {
     cairo_stroke_preserve(context->ptr);
@@ -622,74 +622,74 @@ static void agContextStroke(AgateVM *vm) {
 }
 
 static void agContextPaint(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+  struct Context *context = agateSlotGetForeign(vm, 0);
   cairo_paint(context->ptr);
 }
 
 static void agContextPaintWithAlpha(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  double alpha = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
+  struct Context *context = agateSlotGetForeign(vm, 0);
+  double alpha = agateSlotGetFloat(vm, 1);
   cairo_paint_with_alpha(context->ptr, alpha);
 }
 
 // path
 
 static void agContextMoveTo(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  double x = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
-  double y = agateSlotGetFloat(vm, agateSlotForArg(vm, 2));
+  struct Context *context = agateSlotGetForeign(vm, 0);
+  double x = agateSlotGetFloat(vm, 1);
+  double y = agateSlotGetFloat(vm, 2);
   cairo_move_to(context->ptr, x, y);
 }
 
 static void agContextLineTo(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  double x = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
-  double y = agateSlotGetFloat(vm, agateSlotForArg(vm, 2));
+  struct Context *context = agateSlotGetForeign(vm, 0);
+  double x = agateSlotGetFloat(vm, 1);
+  double y = agateSlotGetFloat(vm, 2);
   cairo_line_to(context->ptr, x, y);
 }
 
 static void agContextCurveTo(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  double x1 = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
-  double y1 = agateSlotGetFloat(vm, agateSlotForArg(vm, 2));
-  double x2 = agateSlotGetFloat(vm, agateSlotForArg(vm, 3));
-  double y2 = agateSlotGetFloat(vm, agateSlotForArg(vm, 4));
-  double x3 = agateSlotGetFloat(vm, agateSlotForArg(vm, 5));
-  double y3 = agateSlotGetFloat(vm, agateSlotForArg(vm, 6));
+  struct Context *context = agateSlotGetForeign(vm, 0);
+  double x1 = agateSlotGetFloat(vm, 1);
+  double y1 = agateSlotGetFloat(vm, 2);
+  double x2 = agateSlotGetFloat(vm, 3);
+  double y2 = agateSlotGetFloat(vm, 4);
+  double x3 = agateSlotGetFloat(vm, 5);
+  double y3 = agateSlotGetFloat(vm, 6);
   cairo_curve_to(context->ptr, x1, y1, x2, y2, x3, y3);
 }
 
 static void agContextClosePath(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
+  struct Context *context = agateSlotGetForeign(vm, 0);
   cairo_close_path(context->ptr);
 }
 
 static void agContextRectangle(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  double x = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
-  double y = agateSlotGetFloat(vm, agateSlotForArg(vm, 2));
-  double width = agateSlotGetFloat(vm, agateSlotForArg(vm, 3));
-  double height = agateSlotGetFloat(vm, agateSlotForArg(vm, 4));
+  struct Context *context = agateSlotGetForeign(vm, 0);
+  double x = agateSlotGetFloat(vm, 1);
+  double y = agateSlotGetFloat(vm, 2);
+  double width = agateSlotGetFloat(vm, 3);
+  double height = agateSlotGetFloat(vm, 4);
   cairo_rectangle(context->ptr, x, y, width, height);
 }
 
 static void agContextArc(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  double xc = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
-  double yc = agateSlotGetFloat(vm, agateSlotForArg(vm, 2));
-  double radius = agateSlotGetFloat(vm, agateSlotForArg(vm, 3));
-  double angle1 = agateSlotGetFloat(vm, agateSlotForArg(vm, 4));
-  double angle2 = agateSlotGetFloat(vm, agateSlotForArg(vm, 5));
+  struct Context *context = agateSlotGetForeign(vm, 0);
+  double xc = agateSlotGetFloat(vm, 1);
+  double yc = agateSlotGetFloat(vm, 2);
+  double radius = agateSlotGetFloat(vm, 3);
+  double angle1 = agateSlotGetFloat(vm, 4);
+  double angle2 = agateSlotGetFloat(vm, 5);
   cairo_arc(context->ptr, xc, yc, radius, angle1, angle2);
 }
 
 static void agContextArcNegative(AgateVM *vm) {
-  struct Context *context = agateSlotGetForeign(vm, agateSlotForArg(vm, 0));
-  double xc = agateSlotGetFloat(vm, agateSlotForArg(vm, 1));
-  double yc = agateSlotGetFloat(vm, agateSlotForArg(vm, 2));
-  double radius = agateSlotGetFloat(vm, agateSlotForArg(vm, 3));
-  double angle1 = agateSlotGetFloat(vm, agateSlotForArg(vm, 4));
-  double angle2 = agateSlotGetFloat(vm, agateSlotForArg(vm, 5));
+  struct Context *context = agateSlotGetForeign(vm, 0);
+  double xc = agateSlotGetFloat(vm, 1);
+  double yc = agateSlotGetFloat(vm, 2);
+  double radius = agateSlotGetFloat(vm, 3);
+  double angle1 = agateSlotGetFloat(vm, 4);
+  double angle2 = agateSlotGetFloat(vm, 5);
   cairo_arc_negative(context->ptr, xc, yc, radius, angle1, angle2);
 }
 
