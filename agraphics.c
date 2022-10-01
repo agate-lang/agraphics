@@ -15,6 +15,13 @@
 
 #include "config.h"
 
+#define AG_VECTOR2_TAG  0x1000
+#define AG_MATRIX_TAG   0x1001
+#define AG_COLOR_TAG    0x1002
+#define AG_SURFACE_TAG  0x1003
+#define AG_PATTERN_TAG  0x1004
+#define AG_CONTEXT_TAG  0x1004
+
 /*
  * Tools
  */
@@ -54,31 +61,40 @@ static ptrdiff_t agVector2Allocate(AgateVM *vm, const char *unit_name, const cha
   return sizeof(struct Vector2);
 }
 
+static uint64_t agVector2Tag(AgateVM *vm, const char *unit_name, const char *class_name) {
+  return AG_VECTOR2_TAG;
+}
+
 // methods
 
 static void agVector2New(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_VECTOR2_TAG);
   struct Vector2 *vector = agateSlotGetForeign(vm, 0);
   vector->x = agateSlotGetFloat(vm, 1);
   vector->y = agateSlotGetFloat(vm, 2);
 }
 
 static void agVector2XGetter(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_VECTOR2_TAG);
   struct Vector2 *vector = agateSlotGetForeign(vm, 0);
   agateSlotSetFloat(vm, AGATE_RETURN_SLOT, vector->x);
 }
 
 static void agVector2XSetter(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_VECTOR2_TAG);
   struct Vector2 *vector = agateSlotGetForeign(vm, 0);
   vector->x = agateSlotGetFloat(vm, 1);
   agateSlotSetFloat(vm, AGATE_RETURN_SLOT, vector->x);
 }
 
 static void agVector2YGetter(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_VECTOR2_TAG);
   struct Vector2 *vector = agateSlotGetForeign(vm, 0);
   agateSlotSetFloat(vm, AGATE_RETURN_SLOT, vector->y);
 }
 
 static void agVector2YSetter(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_VECTOR2_TAG);
   struct Vector2 *vector = agateSlotGetForeign(vm, 0);
   vector->y = agateSlotGetFloat(vm, 1);
   agateSlotSetFloat(vm, AGATE_RETURN_SLOT, vector->y);
@@ -94,14 +110,20 @@ static ptrdiff_t agMatrixAllocate(AgateVM *vm, const char *unit_name, const char
   return sizeof(cairo_matrix_t);
 }
 
+static uint64_t agMatrixTag(AgateVM *vm, const char *unit_name, const char *class_name) {
+  return AG_MATRIX_TAG;
+}
+
 // methods
 
 static void agMatrixNew(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_MATRIX_TAG);
   cairo_matrix_t *matrix = agateSlotGetForeign(vm, 0);
   cairo_matrix_init_identity(matrix);
 }
 
 static void agMatrixNewTranslate(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_MATRIX_TAG);
   cairo_matrix_t *matrix = agateSlotGetForeign(vm, 0);
   double tx = agateSlotGetFloat(vm, 1);
   double ty = agateSlotGetFloat(vm, 2);
@@ -109,6 +131,7 @@ static void agMatrixNewTranslate(AgateVM *vm) {
 }
 
 static void agMatrixNewScale(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_MATRIX_TAG);
   cairo_matrix_t *matrix = agateSlotGetForeign(vm, 0);
   double sx = agateSlotGetFloat(vm, 1);
   double sy = agateSlotGetFloat(vm, 2);
@@ -116,12 +139,14 @@ static void agMatrixNewScale(AgateVM *vm) {
 }
 
 static void agMatrixNewRotate(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_MATRIX_TAG);
   cairo_matrix_t *matrix = agateSlotGetForeign(vm, 0);
   double angle = agateSlotGetFloat(vm, 1);
   cairo_matrix_init_rotate(matrix, angle);
 }
 
 static void agMatrixTranslate(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_MATRIX_TAG);
   cairo_matrix_t *matrix = agateSlotGetForeign(vm, 0);
   double tx = agateSlotGetFloat(vm, 1);
   double ty = agateSlotGetFloat(vm, 2);
@@ -129,6 +154,7 @@ static void agMatrixTranslate(AgateVM *vm) {
 }
 
 static void agMatrixScale(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_MATRIX_TAG);
   cairo_matrix_t *matrix = agateSlotGetForeign(vm, 0);
   double sx = agateSlotGetFloat(vm, 1);
   double sy = agateSlotGetFloat(vm, 2);
@@ -136,12 +162,14 @@ static void agMatrixScale(AgateVM *vm) {
 }
 
 static void agMatrixRotate(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_MATRIX_TAG);
   cairo_matrix_t *matrix = agateSlotGetForeign(vm, 0);
   double angle = agateSlotGetFloat(vm, 1);
   cairo_matrix_rotate(matrix, angle);
 }
 
 static void agMatrixInvert(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_MATRIX_TAG);
   cairo_matrix_t *matrix = agateSlotGetForeign(vm, 0);
 
   if (cairo_matrix_invert(matrix) != CAIRO_STATUS_SUCCESS) {
@@ -152,7 +180,9 @@ static void agMatrixInvert(AgateVM *vm) {
 }
 
 static void agMatrixMultiply(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_MATRIX_TAG);
   cairo_matrix_t *matrix = agateSlotGetForeign(vm, 0);
+  assert(agateSlotGetForeignTag(vm, 1) == AG_MATRIX_TAG);
   cairo_matrix_t *other = agateSlotGetForeign(vm, 1);
 
   ptrdiff_t class_slot = agateSlotAllocate(vm);
@@ -182,9 +212,14 @@ static ptrdiff_t agColorAllocate(AgateVM *vm, const char *unit_name, const char 
   return sizeof(struct Color);
 }
 
+static uint64_t agColorTag(AgateVM *vm, const char *unit_name, const char *class_name) {
+  return AG_COLOR_TAG;
+}
+
 // methods
 
 static void agColorNew(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_COLOR_TAG);
   struct Color *color = agateSlotGetForeign(vm, 0);
   color->r = agateSlotGetFloat(vm, 1);
   color->g = agateSlotGetFloat(vm, 2);
@@ -193,44 +228,52 @@ static void agColorNew(AgateVM *vm) {
 }
 
 static void agColorRGetter(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_COLOR_TAG);
   struct Color *color = agateSlotGetForeign(vm, 0);
   agateSlotSetFloat(vm, AGATE_RETURN_SLOT, color->r);
 }
 
 static void agColorRSetter(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_COLOR_TAG);
   struct Color *color = agateSlotGetForeign(vm, 0);
   color->r = agateSlotGetFloat(vm, 1);
   agateSlotSetFloat(vm, AGATE_RETURN_SLOT, color->r);
 }
 
 static void agColorGGetter(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_COLOR_TAG);
   struct Color *color = agateSlotGetForeign(vm, 0);
   agateSlotSetFloat(vm, AGATE_RETURN_SLOT, color->g);
 }
 
 static void agColorGSetter(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_COLOR_TAG);
   struct Color *color = agateSlotGetForeign(vm, 0);
   color->g = agateSlotGetFloat(vm, 1);
   agateSlotSetFloat(vm, AGATE_RETURN_SLOT, color->g);
 }
 
 static void agColorBGetter(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_COLOR_TAG);
   struct Color *color = agateSlotGetForeign(vm, 0);
   agateSlotSetFloat(vm, AGATE_RETURN_SLOT, color->b);
 }
 
 static void agColorBSetter(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_COLOR_TAG);
   struct Color *color = agateSlotGetForeign(vm, 0);
   color->b = agateSlotGetFloat(vm, 1);
   agateSlotSetFloat(vm, AGATE_RETURN_SLOT, color->b);
 }
 
 static void agColorAGetter(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_COLOR_TAG);
   struct Color *color = agateSlotGetForeign(vm, 0);
   agateSlotSetFloat(vm, AGATE_RETURN_SLOT, color->a);
 }
 
 static void agColorASetter(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_COLOR_TAG);
   struct Color *color = agateSlotGetForeign(vm, 0);
   color->a = agateSlotGetFloat(vm, 1);
   agateSlotSetFloat(vm, AGATE_RETURN_SLOT, color->a);
@@ -297,6 +340,7 @@ static void agConvertHsvToRgb(struct Color *color, const struct HSV *hsv) {
 }
 
 static void agColorDarker(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_COLOR_TAG);
   struct Color *color = agateSlotGetForeign(vm, 0);
   double percent = agateSlotGetFloat(vm, 1);
 
@@ -307,6 +351,7 @@ static void agColorDarker(AgateVM *vm) {
 }
 
 static void agColorLighter(AgateVM* vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_COLOR_TAG);
   struct Color *color = agateSlotGetForeign(vm, 0);
   double percent = agateSlotGetFloat(vm, 1);
 
@@ -341,6 +386,10 @@ static ptrdiff_t agSurfaceAllocate(AgateVM *vm, const char *unit_name, const cha
   return sizeof(struct Surface);
 }
 
+static uint64_t agSurfaceTag(AgateVM *vm, const char *unit_name, const char *class_name) {
+  return AG_SURFACE_TAG;
+}
+
 void agSurfaceDestroy(AgateVM *vm, const char *unit_name, const char *class_name, void *data) {
   struct Surface *surface = data;
 
@@ -354,13 +403,16 @@ void agSurfaceDestroy(AgateVM *vm, const char *unit_name, const char *class_name
 // methods
 
 static void agSurfaceNew(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_SURFACE_TAG);
   struct Surface *surface = agateSlotGetForeign(vm, 0);
+  assert(agateSlotGetForeignTag(vm, 1) == AG_VECTOR2_TAG);
   struct Vector2 *size = agateSlotGetForeign(vm, 1);
   surface->ptr = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, size->x, size->y);
   assert(surface->ptr);
 }
 
 static void agSurfaceNewFromPng(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_SURFACE_TAG);
   struct Surface *surface = agateSlotGetForeign(vm, 0);
   const char *filename = agateSlotGetString(vm, 1);
   surface->ptr = cairo_image_surface_create_from_png(filename);
@@ -368,6 +420,7 @@ static void agSurfaceNewFromPng(AgateVM *vm) {
 }
 
 static void agSurfaceExport(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_SURFACE_TAG);
   struct Surface *surface = agateSlotGetForeign(vm, 0);
   const char *filename = agateSlotGetString(vm, 1);
   cairo_status_t status = cairo_surface_write_to_png(surface->ptr, filename);
@@ -391,6 +444,10 @@ static ptrdiff_t agPatternAllocate(AgateVM *vm, const char *unit_name, const cha
   return sizeof(struct Pattern);
 }
 
+static uint64_t agPatternTag(AgateVM *vm, const char *unit_name, const char *class_name) {
+  return AG_PATTERN_TAG;
+}
+
 void agPatternDestroy(AgateVM *vm, const char *unit_name, const char *class_name, void *data) {
   struct Pattern *pattern = data;
 
@@ -404,41 +461,54 @@ void agPatternDestroy(AgateVM *vm, const char *unit_name, const char *class_name
 // methods
 
 static void agPatternSetMatrix(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_PATTERN_TAG);
   struct Pattern *pattern = agateSlotGetForeign(vm, 0);
   cairo_matrix_t *matrix = agateSlotGetForeign(vm, 1);
   cairo_pattern_set_matrix(pattern->ptr, matrix);
 }
 
 static void agSolidPatternNew(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_PATTERN_TAG);
   struct Pattern *pattern = agateSlotGetForeign(vm, 0);
+  assert(agateSlotGetForeignTag(vm, 1) == AG_COLOR_TAG);
   struct Color *color = agateSlotGetForeign(vm, 1);
   pattern->ptr = cairo_pattern_create_rgba(color->r, color->g, color->b, color->a);
 }
 
 static void agSurfacePatternNew(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_PATTERN_TAG);
   struct Pattern *pattern = agateSlotGetForeign(vm, 0);
+  assert(agateSlotGetForeignTag(vm, 1) == AG_SURFACE_TAG);
   struct Surface *surface = agateSlotGetForeign(vm, 1);
   pattern->ptr = cairo_pattern_create_for_surface(surface->ptr);
 }
 
 static void agGradientPatternAddColor(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_PATTERN_TAG);
   struct Pattern *pattern = agateSlotGetForeign(vm, 0);
   double offset = agateSlotGetFloat(vm, 1);
+  assert(agateSlotGetForeignTag(vm, 2) == AG_COLOR_TAG);
   struct Color *color = agateSlotGetForeign(vm, 2);
   cairo_pattern_add_color_stop_rgba(pattern->ptr, offset, color->r, color->g, color->b, color->a);
 }
 
 static void agLinearGradientPatternNew(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_PATTERN_TAG);
   struct Pattern *pattern = agateSlotGetForeign(vm, 0);
+  assert(agateSlotGetForeignTag(vm, 1) == AG_VECTOR2_TAG);
   struct Vector2 *p0 = agateSlotGetForeign(vm, 1);
+  assert(agateSlotGetForeignTag(vm, 2) == AG_VECTOR2_TAG);
   struct Vector2 *p1 = agateSlotGetForeign(vm, 2);
   pattern->ptr = cairo_pattern_create_linear(p0->x, p0->y, p1->x, p1->y);
 }
 
 static void agRadialGradientPatternNew(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_PATTERN_TAG);
   struct Pattern *pattern = agateSlotGetForeign(vm, 0);
+  assert(agateSlotGetForeignTag(vm, 1) == AG_VECTOR2_TAG);
   struct Vector2 *c0 = agateSlotGetForeign(vm, 1);
   double r0 = agateSlotGetFloat(vm, 2);
+  assert(agateSlotGetForeignTag(vm, 3) == AG_VECTOR2_TAG);
   struct Vector2 *c1 = agateSlotGetForeign(vm, 3);
   double r1 = agateSlotGetFloat(vm, 4);
   pattern->ptr = cairo_pattern_create_radial(c0->x, c0->y, r0, c1->x, c1->y, r1);
@@ -458,6 +528,10 @@ static ptrdiff_t agContextAllocate(AgateVM *vm, const char *unit_name, const cha
   return sizeof(struct Context);
 }
 
+static uint64_t agContextTag(AgateVM *vm, const char *unit_name, const char *class_name) {
+  return AG_CONTEXT_TAG;
+}
+
 void agContextDestroy(AgateVM *vm, const char *unit_name, const char *class_name, void *data) {
   struct Context *context = data;
 
@@ -471,17 +545,21 @@ void agContextDestroy(AgateVM *vm, const char *unit_name, const char *class_name
 // methods
 
 static void agContextNew(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
+  assert(agateSlotGetForeignTag(vm, 1) == AG_SURFACE_TAG);
   struct Surface *surface = agateSlotGetForeign(vm, 1);
   context->ptr = cairo_create(surface->ptr);
 }
 
 static void agContextSave(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   cairo_save(context->ptr);
 }
 
 static void agContextRestore(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   cairo_restore(context->ptr);
 }
@@ -489,11 +567,13 @@ static void agContextRestore(AgateVM *vm) {
 // group
 
 static void agContextPushGroup(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   cairo_push_group(context->ptr);
 }
 
 static void agContextPopGroupToSource(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   cairo_pop_group_to_source(context->ptr);
 }
@@ -501,6 +581,7 @@ static void agContextPopGroupToSource(AgateVM *vm) {
 // matrix
 
 static void agContextTranslate(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   double tx = agateSlotGetFloat(vm, 1);
   double ty = agateSlotGetFloat(vm, 2);
@@ -508,6 +589,7 @@ static void agContextTranslate(AgateVM *vm) {
 }
 
 static void agContextScale(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   double sx = agateSlotGetFloat(vm, 1);
   double sy = agateSlotGetFloat(vm, 2);
@@ -515,6 +597,7 @@ static void agContextScale(AgateVM *vm) {
 }
 
 static void agContextRotate(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   double angle = agateSlotGetFloat(vm, 1);
   cairo_rotate(context->ptr, angle);
@@ -523,13 +606,17 @@ static void agContextRotate(AgateVM *vm) {
 // source
 
 static void agContextSetSourceColor(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
+  assert(agateSlotGetForeignTag(vm, 1) == AG_COLOR_TAG);
   struct Color *color = agateSlotGetForeign(vm, 1);
   cairo_set_source_rgba(context->ptr, color->r, color->g, color->b, color->a);
 }
 
 static void agContextSetSourceSurface(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
+  assert(agateSlotGetForeignTag(vm, 1) == AG_SURFACE_TAG);
   struct Surface *surface = agateSlotGetForeign(vm, 1);
   double x = agateSlotGetFloat(vm, 2);
   double y = agateSlotGetFloat(vm, 3);
@@ -537,7 +624,9 @@ static void agContextSetSourceSurface(AgateVM *vm) {
 }
 
 static void agContextSetSourcePattern(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
+  assert(agateSlotGetForeignTag(vm, 1) == AG_PATTERN_TAG);
   struct Pattern *pattern = agateSlotGetForeign(vm, 1);
   cairo_set_source(context->ptr, pattern->ptr);
 }
@@ -545,42 +634,49 @@ static void agContextSetSourcePattern(AgateVM *vm) {
 // style
 
 static void agContextSetAntialias(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   int64_t raw = agateSlotGetInt(vm, 1);
   cairo_set_antialias(context->ptr, (cairo_antialias_t) raw);
 }
 
 static void agContextSetFillRule(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   int64_t raw = agateSlotGetInt(vm, 1);
   cairo_set_fill_rule(context->ptr, (cairo_fill_rule_t) raw);
 }
 
 static void agContextSetLineCap(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   int64_t raw = agateSlotGetInt(vm, 1);
   cairo_set_line_cap(context->ptr, (cairo_line_cap_t) raw);
 }
 
 static void agContextSetLineJoin(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   int64_t raw = agateSlotGetInt(vm, 1);
   cairo_set_line_join(context->ptr, (cairo_line_join_t) raw);
 }
 
 static void agContextSetLineWidth(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   double width = agateSlotGetFloat(vm, 1);
   cairo_set_line_width(context->ptr, width);
 }
 
 static void agContextSetMiterLimit(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   double limit = agateSlotGetFloat(vm, 1);
   cairo_set_miter_limit(context->ptr, limit);
 }
 
 static void agContextSetOperator(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   int64_t raw = agateSlotGetInt(vm, 1);
   cairo_set_operator(context->ptr, (cairo_operator_t) raw);
@@ -589,6 +685,7 @@ static void agContextSetOperator(AgateVM *vm) {
 // draw
 
 static void agContextClip(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   bool preserve = agateSlotGetBool(vm, 1);
 
@@ -600,6 +697,7 @@ static void agContextClip(AgateVM *vm) {
 }
 
 static void agContextFill(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   bool preserve = agateSlotGetBool(vm, 1);
 
@@ -611,6 +709,7 @@ static void agContextFill(AgateVM *vm) {
 }
 
 static void agContextStroke(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   bool preserve = agateSlotGetBool(vm, 1);
 
@@ -622,11 +721,13 @@ static void agContextStroke(AgateVM *vm) {
 }
 
 static void agContextPaint(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   cairo_paint(context->ptr);
 }
 
 static void agContextPaintWithAlpha(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   double alpha = agateSlotGetFloat(vm, 1);
   cairo_paint_with_alpha(context->ptr, alpha);
@@ -635,6 +736,7 @@ static void agContextPaintWithAlpha(AgateVM *vm) {
 // path
 
 static void agContextMoveTo(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   double x = agateSlotGetFloat(vm, 1);
   double y = agateSlotGetFloat(vm, 2);
@@ -642,6 +744,7 @@ static void agContextMoveTo(AgateVM *vm) {
 }
 
 static void agContextLineTo(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   double x = agateSlotGetFloat(vm, 1);
   double y = agateSlotGetFloat(vm, 2);
@@ -649,6 +752,7 @@ static void agContextLineTo(AgateVM *vm) {
 }
 
 static void agContextCurveTo(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   double x1 = agateSlotGetFloat(vm, 1);
   double y1 = agateSlotGetFloat(vm, 2);
@@ -660,11 +764,13 @@ static void agContextCurveTo(AgateVM *vm) {
 }
 
 static void agContextClosePath(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   cairo_close_path(context->ptr);
 }
 
 static void agContextRectangle(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   double x = agateSlotGetFloat(vm, 1);
   double y = agateSlotGetFloat(vm, 2);
@@ -674,6 +780,7 @@ static void agContextRectangle(AgateVM *vm) {
 }
 
 static void agContextArc(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   double xc = agateSlotGetFloat(vm, 1);
   double yc = agateSlotGetFloat(vm, 2);
@@ -684,6 +791,7 @@ static void agContextArc(AgateVM *vm) {
 }
 
 static void agContextArcNegative(AgateVM *vm) {
+  assert(agateSlotGetForeignTag(vm, 0) == AG_CONTEXT_TAG);
   struct Context *context = agateSlotGetForeign(vm, 0);
   double xc = agateSlotGetFloat(vm, 1);
   double yc = agateSlotGetFloat(vm, 2);
@@ -707,33 +815,39 @@ static AgateForeignClassHandler agClassHandler(AgateVM *vm, const char *unit_nam
 
   if (equals(class_name, "Vector2")) {
     handler.allocate = agVector2Allocate;
+    handler.tag = agVector2Tag;
     return handler;
   }
 
   if (equals(class_name, "Matrix")) {
     handler.allocate = agMatrixAllocate;
+    handler.tag = agMatrixTag;
     return handler;
   }
 
   if (equals(class_name, "Color")) {
     handler.allocate = agColorAllocate;
+    handler.tag = agColorTag;
     return handler;
   }
 
   if (equals(class_name, "Surface")) {
     handler.allocate = agSurfaceAllocate;
+    handler.tag = agSurfaceTag;
     handler.destroy = agSurfaceDestroy;
     return handler;
   }
 
   if (equals(class_name, "Context")) {
     handler.allocate = agContextAllocate;
+    handler.tag = agContextTag;
     handler.destroy = agContextDestroy;
     return handler;
   }
 
   if (equals(class_name, "SolidPattern") || equals(class_name, "SurfacePattern") || equals(class_name, "LinearGradientPattern") || equals(class_name, "RadialGradientPattern")) {
     handler.allocate = agPatternAllocate;
+    handler.tag = agPatternTag;
     handler.destroy = agPatternDestroy;
     return handler;
   }
