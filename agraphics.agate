@@ -32,17 +32,17 @@ class Path {
   }
 
   curve_to(p0, p1, p2) {
-    @commands.add(Path.CURVE_TO)
+    @commands.append(Path.CURVE_TO)
     @points.append_all([ p0, p1, p2 ])
   }
 
   line_to(p) {
-    @commands.add(Path.LINE_TO)
+    @commands.append(Path.LINE_TO)
     @points.append(p)
   }
 
   move_to(p) {
-    @commands.add(Path.MOVE_TO)
+    @commands.append(Path.MOVE_TO)
     @points.append(p)
   }
 
@@ -61,8 +61,8 @@ class Path {
     .move_to(last + p)
   }
 
-  close {
-    @commands.add(Path.CLOSE)
+  close() {
+    @commands.append(Path.CLOSE)
   }
 
   iterate(iterator) {
@@ -110,12 +110,12 @@ class Path {
 }
 
 foreign class Vector2 {
-  foreign construct new(x, y)
+  construct new(x, y) foreign
 
-  foreign x
-  foreign x=(val)
-  foreign y
-  foreign y=(val)
+  x foreign
+  x=(val) foreign
+  y foreign
+  y=(val) foreign
 
   +(other) { Vector2.new(.x + other.x, .y + other.y) }
   -(other) { Vector2.new(.x - other.x, .y - other.y) }
@@ -137,22 +137,22 @@ foreign class Vector2 {
 def vec2(x, y) { Vector2.new(x, y) }
 
 foreign class Matrix {
-  foreign construct new() # identity
-  foreign construct new_translate(tx, ty)
-  foreign construct new_scale(sx, sy)
-  foreign construct new_rotate(angle)
+  construct new() foreign # identity
+  construct new_translate(tx, ty) foreign
+  construct new_scale(sx, sy) foreign
+  construct new_rotate(angle) foreign
 
-  foreign translate(tx, ty)
-  foreign scale(sx, sy)
-  foreign rotate(angle)
+  translate(tx, ty) foreign
+  scale(sx, sy) foreign
+  rotate(angle) foreign
 
-  foreign invert()
+  invert() foreign
 
-  foreign *(other)
+  *(other) foreign
 }
 
 foreign class Color {
-  foreign construct new(r, g, b, a)
+  construct new(r, g, b, a) foreign
 
   construct new(x) {
     .r = ((x >> 24) & 0xFF).to_f / 255.0
@@ -161,20 +161,20 @@ foreign class Color {
     .a = ((x      ) & 0xFF).to_f / 255.0
   }
 
-  foreign r
-  foreign r=(val)
-  foreign g
-  foreign g=(val)
-  foreign b
-  foreign b=(val)
-  foreign a
-  foreign a=(val)
+  r foreign
+  r=(val) foreign
+  g foreign
+  g=(val) foreign
+  b foreign
+  b=(val) foreign
+  a foreign
+  a=(val) foreign
 
   to_s { "[%(.r), %(.g), %(.b), %(.a)]" }
 
   *(other) { Color.new(.r * other.r, .g * other.g, .b * other.b, .a * other.a) }
 
-  foreign darker(percent)
+  darker(percent) foreign
 
   static darker(color, percent) {
     def result = Color.new(color.r, color.g, color.b, color.a)
@@ -184,7 +184,7 @@ foreign class Color {
 
   static darker(color) { .darker(color, 0.5) }
 
-  foreign lighter(percent)
+  lighter(percent) foreign
 
   static lighter(color, percent) {
     def result = Color.new(color.r, color.g, color.b, color.a)
@@ -203,9 +203,9 @@ foreign class Color {
 }
 
 foreign class Surface {
-  foreign construct new(size)
-  foreign construct new_from_png(filename)
-  foreign export(filename)
+  construct new(size) foreign
+  construct new_from_png(filename) foreign
+  export(filename) foreign
 
   draw(fn) {
     def ctx = Context.new(this)
@@ -214,27 +214,27 @@ foreign class Surface {
 }
 
 class Pattern {
-  foreign set_matrix(matrix)
+  set_matrix(matrix) foreign
 }
 
 foreign class SolidPattern is Pattern {
-  foreign construct new(color)
+  construct new(color) foreign
 }
 
 foreign class SurfacePattern is Pattern {
-  foreign construct new(surface)
+  construct new(surface) foreign
 }
 
 class GradientPattern is Pattern {
-  foreign add_color_stop(offset, color)
+  add_color_stop(offset, color) foreign
 }
 
 foreign class LinearGradientPattern is GradientPattern {
-  foreign construct new(p0, p1)
+  construct new(p0, p1) foreign
 }
 
 foreign class RadialGradientPattern is GradientPattern {
-  foreign construct new(c0, r0, c1, r1)
+  construct new(c0, r0, c1, r1) foreign
 }
 
 class FillRule {
@@ -299,65 +299,65 @@ class Antialias {
 }
 
 foreign class Context {
-  foreign construct new(surface)
+  construct new(surface) foreign
 
   # state
 
-  foreign save()
-  foreign restore()
+  save() foreign
+  restore() foreign
 
   # group
 
-  foreign push_group()
-  foreign pop_group_to_source()
+  push_group() foreign
+  pop_group_to_source() foreign
 
   # matrix
 
-  foreign translate(x, y)
+  translate(x, y) foreign
   translate(vec) { .translate(vec.x, vec.y) }
-  foreign scale(x, y)
+  scale(x, y) foreign
   scale(vec) { .scale(vec.x, vec.y) }
-  foreign rotate(angle)
+  rotate(angle) foreign
 
   # source
 
-  foreign set_source_color(color)
-  foreign set_source_surface(surface, x, y)
-  foreign set_source_pattern(pattern)
+  set_source_color(color) foreign
+  set_source_surface(surface, x, y) foreign
+  set_source_pattern(pattern) foreign
 
   # style
 
-  foreign set_antialias(antialias)
-  foreign set_fill_rule(rule)
-  foreign set_line_cap(cap)
-  foreign set_line_join(join)
-  foreign set_line_width(width)
-  foreign set_miter_limit(limit)
-  foreign set_operator(operator)
+  set_antialias(antialias) foreign
+  set_fill_rule(rule) foreign
+  set_line_cap(cap) foreign
+  set_line_join(join) foreign
+  set_line_width(width) foreign
+  set_miter_limit(limit) foreign
+  set_operator(operator) foreign
 
   # draw
 
-  foreign clip(preserve)
+  clip(preserve) foreign
   clip() { .clip(Path.DISCARD) }
 
-  foreign fill(preserve)
+  fill(preserve) foreign
   fill() { .fill(Path.DISCARD) }
 
-  foreign stroke(preserve)
+  stroke(preserve) foreign
   stroke() { .stroke(Path.DISCARD) }
 
-  foreign paint()
-  foreign paint_with_alpha(alpha)
+  paint() foreign
+  paint_with_alpha(alpha) foreign
 
   # path handling
 
-  foreign move_to(x, y)
+  move_to(x, y) foreign
   move_to(p) { .move_to(p.x, p.y) }
-  foreign line_to(x, y)
+  line_to(x, y) foreign
   line_to(p) { .line_to(p.x, p.y) }
-  foreign curve_to(x1, y1, x2, y2, x3, y3)
+  curve_to(x1, y1, x2, y2, x3, y3) foreign
   curve_to(p1, p2, p3) { .curve_to(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y) }
-  foreign close_path()
+  close_path() foreign
 
   set_path(path) {
     for (elt in path) {
@@ -373,10 +373,10 @@ foreign class Context {
     }
   }
 
-  foreign rectangle(x, y, width, height)
+  rectangle(x, y, width, height) foreign
   rectangle(position, size) { .rectangle(position.x, position.y, size.x, size.y) }
-  foreign arc(xc, yc, radius, angle1, angle2)
-  foreign arc_negative(xc, yc, radius, angle1, angle2)
+  arc(xc, yc, radius, angle1, angle2) foreign
+  arc_negative(xc, yc, radius, angle1, angle2) foreign
 
   circle(xc, yc, radius) { .arc(xc, yc, radius, 0.0, 2.0 * Math.PI) }
   circle(center, radius) { .circle(center.x, center.y, radius) }
