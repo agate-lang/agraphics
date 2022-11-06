@@ -11,7 +11,7 @@
 #include <cairo.h>
 
 #include "agate.h"
-#include "support.h"
+#include "agate-support.h"
 
 #include "config.h"
 
@@ -811,7 +811,7 @@ static void agContextArcNegative(AgateVM *vm) {
 
 static AgateForeignClassHandler agClassHandler(AgateVM *vm, const char *unit_name, const char *class_name) {
   assert(equals(unit_name, "agraphics"));
-  AgateForeignClassHandler handler = { NULL, NULL };
+  AgateForeignClassHandler handler = { NULL, NULL, NULL };
 
   if (equals(class_name, "Vector2")) {
     handler.allocate = agVector2Allocate;

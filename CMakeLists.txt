@@ -13,10 +13,6 @@ endif()
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_EXTENSIONS FALSE)
 
-if(UNIX)
-  set(CMAKE_C_FLAGS "-Wall")
-endif()
-
 include(GNUInstallDirs)
 
 find_package(PkgConfig REQUIRED)
@@ -28,8 +24,14 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.h.in" "${CMAKE_CURRENT_BINARY
 add_executable(agraphics
   agraphics.c
   agate/agate.c
-  agate/support.c
+  agate/agate-support.c
 )
+
+if(MSVC)
+  target_compile_options(agraphics PRIVATE /W3)
+else()
+  target_compile_options(agraphics PRIVATE -Wall -Wpedantic)
+endif()
 
 target_include_directories(agraphics
   PRIVATE
